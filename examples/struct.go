@@ -21,6 +21,31 @@ type nonPlayerCharacter struct {
 	loc   location
 }
 
+type attacker struct {
+	attackPower int
+	dmgBonus    int
+}
+
+type sword struct {
+	attacker
+	twoHanded bool
+}
+
+type gun struct {
+	attacker
+	bulletsRemaining int
+}
+
+func (s sword) Wield() bool {
+	fmt.Println("You've wielded a sword!")
+	return true
+}
+
+func (g gun) Wield() bool {
+	fmt.Println("You've wielded a gun!")
+	return true
+}
+
 // ShowingNonPlayers - Display some non-players
 func ShowingNonPlayers() {
 	fmt.Println("Structs... Demo")
@@ -44,4 +69,10 @@ func ShowingNonPlayers() {
 	}
 
 	fmt.Println(anotherDemon)
+
+	sword1 := sword{attacker: attacker{attackPower: 1, dmgBonus: 5}, twoHanded: true}
+	gun1 := gun{attacker: attacker{attackPower: 10, dmgBonus: 20}, bulletsRemaining: 11}
+	fmt.Printf("Weapons: sword: %v, gun: %v\n", sword1, gun1)
+	sword1.Wield()
+	gun1.Wield()
 }
