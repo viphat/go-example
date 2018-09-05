@@ -1,6 +1,9 @@
 package examples
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 type power struct {
 	attack  int
@@ -8,9 +11,9 @@ type power struct {
 }
 
 type location struct {
-	x float32
-	y float32
-	z float32
+	x float64
+	y float64
+	z float64
 }
 
 type nonPlayerCharacter struct {
@@ -36,6 +39,10 @@ type gun struct {
 	bulletsRemaining int
 }
 
+type weapon interface {
+	Wield() bool
+}
+
 func (s sword) Wield() bool {
 	fmt.Println("You've wielded a sword!")
 	return true
@@ -44,6 +51,26 @@ func (s sword) Wield() bool {
 func (g gun) Wield() bool {
 	fmt.Println("You've wielded a gun!")
 	return true
+}
+
+func wielder(w weapon) bool {
+	fmt.Println("Wielding...")
+	return w.Wield()
+}
+
+func (loc location) String() string {
+	return fmt.Sprintf("(%f, %f, %f)", loc.x, loc.y, loc.z)
+}
+
+func (loc location) euclideanDistance(target location) float64 {
+	return math.Sqrt(
+		(loc.x-target.x)*(loc.x-target.x) +
+			(loc.x-target.y)*(loc.x-target.y) +
+			(loc.x-target.z)*(loc.x-target.z))
+}
+
+func (npc nonPlayerCharacter) distanceTo(target nonPlayerCharacter) float64 {
+	return npc.loc.euclideanDistance(target.loc)
 }
 
 // ShowingNonPlayers - Display some non-players
@@ -73,6 +100,8 @@ func ShowingNonPlayers() {
 	sword1 := sword{attacker: attacker{attackPower: 1, dmgBonus: 5}, twoHanded: true}
 	gun1 := gun{attacker: attacker{attackPower: 10, dmgBonus: 20}, bulletsRemaining: 11}
 	fmt.Printf("Weapons: sword: %v, gun: %v\n", sword1, gun1)
-	sword1.Wield()
-	gun1.Wield()
+	wielder(sword1)
+	wielder(gun1)
+	fmt.Println(demon.loc)
+	fmt.Printf("Npc %s is %f units away from Npv %s\n", demon.name, demon.distanceTo(anotherDemon), anotherDemon.name)
 }
